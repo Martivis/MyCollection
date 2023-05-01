@@ -2,6 +2,7 @@ package org.MyList;
 
 import java.util.Collection;
 
-public interface MyReadonlyList<TData> extends Collection<TData> {
-    TData getByIndex(int index);
+public interface MyReadonlyList extends Collection {
+    int getByIndex(int index);
+    int capacity();
 }

@@ -35,7 +35,7 @@ public class MyListImpl implements MyList {
     }
 
     private void freeUpSpace(int addedCount) {
-        if (elementsCount + addedCount >= capacity)
+        if (elementsCount + addedCount > capacity)
             resize();
     }
 
@@ -200,7 +200,7 @@ public class MyListImpl implements MyList {
     @Override
     public boolean add(Object o) {
         freeUpSpace(1);
-        array[elementsCount] = (int)o;
+        array[elementsCount++] = (int)o;
         return true;
     }
 

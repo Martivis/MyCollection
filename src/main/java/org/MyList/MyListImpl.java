@@ -28,10 +28,16 @@ public class MyListImpl implements MyList {
      */
     @Override
     public void insert(int value, int index) {
+        checkIndex(index);
         freeUpSpace(1);
         moveElementsRightFrom(index);
         array[index] = value;
         elementsCount++;
+    }
+
+    private void checkIndex(int index) throws IndexOutOfBoundsException {
+        if (index > elementsCount || index < 0)
+            throw new IndexOutOfBoundsException("Index out of range");
     }
 
     private void freeUpSpace(int addedCount) {

@@ -2,6 +2,8 @@ package org.MyList;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 
 public class MyListImpl implements MyList {
     private static final float RESIZE_COEFFICIENT = 1.5f;
@@ -135,7 +137,21 @@ public class MyListImpl implements MyList {
      */
     @Override
     public boolean contains(Object o) {
-        return false;
+        try {
+            find(o);
+            return true;
+        }
+        catch (NoSuchElementException ex) {
+            return false;
+        }
+    }
+
+    public int find(Object o) {
+        for (int i = 0; i < elementsCount; i++) {
+            if (array[i] == (int)o)
+                return i;
+        }
+        throw new NoSuchElementException();
     }
 
     /**
@@ -148,7 +164,64 @@ public class MyListImpl implements MyList {
      */
     @Override
     public Iterator iterator() {
-        return null;
+        return new MyIterator();
+    }
+
+    private class MyIterator implements Iterator<Integer>
+    {
+        private int currentIndex = 0;
+        /**
+         * Returns {@code true} if the iteration has more elements.
+         * (In other words, returns {@code true} if {@link #next} would
+         * return an element rather than throwing an exception.)
+         *
+         * @return {@code true} if the iteration has more elements
+         */
+        @Override
+        public boolean hasNext() {
+            return currentIndex < elementsCount;
+        }
+
+        /**
+         * Returns the next element in the iteration.
+         *
+         * @return the next element in the iteration
+         * @throws NoSuchElementException if the iteration has no more elements
+         */
+        @Override
+        public Integer next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            return getByIndex(currentIndex);
+        }
+
+        /**
+         * Removes from the underlying collection the last element returned
+         * by this iterator (optional operation).  This method can be called
+         * only once per call to {@link #next}.
+         * <p>
+         * The behavior of an iterator is unspecified if the underlying collection
+         * is modified while the iteration is in progress in any way other than by
+         * calling this method, unless an overriding class has specified a
+         * concurrent modification policy.
+         * <p>
+         * The behavior of an iterator is unspecified if this method is called
+         * after a call to the {@link #forEachRemaining forEachRemaining} method.
+         *
+         * @throws UnsupportedOperationException if the {@code remove}
+         *                                       operation is not supported by this iterator
+         * @throws IllegalStateException         if the {@code next} method has not
+         *                                       yet been called, or the {@code remove} method has already
+         *                                       been called after the last call to the {@code next}
+         *                                       method
+         * @implSpec The default implementation throws an instance of
+         * {@link UnsupportedOperationException} and performs no other action.
+         */
+        @Override
+        public void remove() {
+            erase(currentIndex);
+        }
     }
 
     /**
@@ -173,7 +246,11 @@ public class MyListImpl implements MyList {
      */
     @Override
     public Object[] toArray() {
-        return new Object[0];
+        var result = new Object[elementsCount];
+        for (int i = 0; i < elementsCount; i++) {
+            result[i] = array[i];
+        }
+        return result;
     }
 
     /**
@@ -238,7 +315,14 @@ public class MyListImpl implements MyList {
      */
     @Override
     public boolean remove(Object o) {
-        return false;
+        try {
+            var index = find(o);
+            erase(index);
+            return true;
+        }
+        catch (NoSuchElementException ex) {
+            return false;
+        }
     }
 
     /**
@@ -267,7 +351,15 @@ public class MyListImpl implements MyList {
      */
     @Override
     public boolean addAll(Collection c) {
-        return false;
+        try {
+            for (var item : c) {
+                add(item);
+            }
+            return true;
+        }
+        catch (Exception ex) {
+            return false;
+        }
     }
 
     /**
@@ -306,7 +398,14 @@ public class MyListImpl implements MyList {
      */
     @Override
     public boolean retainAll(Collection c) {
-        return false;
+        var changed = false;
+        for (int i = 0; i < elementsCount; i++) {
+            if (!c.contains(getByIndex(i))) {
+                erase(i);
+                changed = true;
+            }
+        }
+        return changed;
     }
 
     /**
@@ -334,7 +433,14 @@ public class MyListImpl implements MyList {
      */
     @Override
     public boolean removeAll(Collection c) {
-        return false;
+        var changed = false;
+        for (var item: c) {
+            var removed = remove(item);
+            if (removed) {
+                changed = true;
+            }
+        };
+        return changed;
     }
 
     /**
@@ -357,7 +463,15 @@ public class MyListImpl implements MyList {
      */
     @Override
     public boolean containsAll(Collection c) {
-        return false;
+        for (var item: c) {
+            try {
+                find(item);
+            }
+            catch (NoSuchElementException ex) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -410,10 +524,14 @@ public class MyListImpl implements MyList {
      */
     @Override
     public Object[] toArray(Object[] a) {
-        var result = new Object[elementsCount];
-        for (int i = 0; i < elementsCount; i++) {
-            result[i] = array[i];
+        Objects.requireNonNull(a);
+        if (a.length < size()) {
+            return toArray();
         }
-        return result;
+        System.arraycopy(array, 0, a, 0, size());
+        if (a.length > size()) {
+            a[size()] = null;
+        }
+        return a;
     }
 }

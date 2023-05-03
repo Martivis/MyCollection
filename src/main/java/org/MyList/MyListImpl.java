@@ -26,6 +26,9 @@ public class MyListImpl implements MyList {
     }
 
     /**
+     * Insert an element on specified index. Other elements will be moved right
+     *
+     * @param value Value of an element
      * @param index
      */
     @Override
@@ -64,6 +67,8 @@ public class MyListImpl implements MyList {
     }
 
     /**
+     * Removes an element on specified index from collection
+     *
      * @param index
      */
     @Override
@@ -84,8 +89,10 @@ public class MyListImpl implements MyList {
     }
 
     /**
+     * Returns a value of an element on specified index
+     *
      * @param index
-     * @return
+     * @return int value of an element
      */
     @Override
     public int getByIndex(int index) {
@@ -104,6 +111,12 @@ public class MyListImpl implements MyList {
         return elementsCount;
     }
 
+    /**
+     * Returns a capacity of the collection. That is the number of elements
+     * that can be added to collection without memory reallocation
+     *
+     * @return int number of total available elements slots in collection
+     */
     @Override
     public int capacity() {
         return capacity;
@@ -146,6 +159,14 @@ public class MyListImpl implements MyList {
         }
     }
 
+    /**
+     * Find index of an element in collection that is equals to param o
+     *
+     * @param o element whose index should be returned
+     * @return index of an element that is equals to o
+     *
+     * @throws NoSuchElementException if element is not found
+     */
     public int find(Object o) {
         for (int i = 0; i < elementsCount; i++) {
             if (array[i] == (int)o)

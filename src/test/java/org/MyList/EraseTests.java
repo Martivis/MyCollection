@@ -6,6 +6,64 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class EraseTests {
     @Test
+    void erase_IndexOutOfBounds_ThrowsException() throws NoSuchFieldException, IllegalAccessException {
+        // assert
+        var list = new MyListImpl(4);
+
+        var array = new int[] { 1, 2, 3, 0 };
+        setFieldValue(list, "array", array);
+
+        var elementsCount = 3;
+        setFieldValue(list, "elementsCount", elementsCount);
+
+        var index = 3;
+
+        // act
+        Exception ex = assertThrows(IndexOutOfBoundsException.class, () -> {
+            list.erase(index);
+        });
+
+        // assert
+        var expectedArray = new int[] { 1, 2, 3, 0 };
+        var actualArray = (int[])getFieldValue(list, "array");
+
+        var expectedElementsCount = 3;
+        var actualElementsCount = getFieldValue(list, "elementsCount");
+
+        assertArrayEquals(expectedArray, actualArray);
+        assertEquals(expectedElementsCount, actualElementsCount);
+    }
+
+    @Test
+    void erase_NegativeIndex_ThrowsException() throws NoSuchFieldException, IllegalAccessException {
+        // assert
+        var list = new MyListImpl(4);
+
+        var array = new int[] { 1, 2, 3, 0 };
+        setFieldValue(list, "array", array);
+
+        var elementsCount = 3;
+        setFieldValue(list, "elementsCount", elementsCount);
+
+        var index = -1;
+
+        // act
+        Exception ex = assertThrows(IndexOutOfBoundsException.class, () -> {
+            list.erase(index);
+        });
+
+        // assert
+        var expectedArray = new int[] { 1, 2, 3, 0 };
+        var actualArray = (int[])getFieldValue(list, "array");
+
+        var expectedElementsCount = 3;
+        var actualElementsCount = getFieldValue(list, "elementsCount");
+
+        assertArrayEquals(expectedArray, actualArray);
+        assertEquals(expectedElementsCount, actualElementsCount);
+    }
+
+    @Test
     void erase_EndIndex() throws NoSuchFieldException, IllegalAccessException {
         // assert
         var list = new MyListImpl(4);
@@ -53,35 +111,6 @@ public class EraseTests {
         var actualArray = (int[])getFieldValue(list, "array");
 
         var expectedElementsCount = 2;
-        var actualElementsCount = getFieldValue(list, "elementsCount");
-
-        assertArrayEquals(expectedArray, actualArray);
-        assertEquals(expectedElementsCount, actualElementsCount);
-    }
-
-    @Test
-    void erase_IndexOutOfBounds_ThrowsException() throws NoSuchFieldException, IllegalAccessException {
-        // assert
-        var list = new MyListImpl(4);
-
-        var array = new int[] { 1, 2, 3, 0 };
-        setFieldValue(list, "array", array);
-
-        var elementsCount = 3;
-        setFieldValue(list, "elementsCount", elementsCount);
-
-        var index = 3;
-
-        // act
-        Exception ex = assertThrows(IndexOutOfBoundsException.class, () -> {
-            list.erase(index);
-        });
-
-        // assert
-        var expectedArray = new int[] { 1, 2, 3, 0 };
-        var actualArray = (int[])getFieldValue(list, "array");
-
-        var expectedElementsCount = 3;
         var actualElementsCount = getFieldValue(list, "elementsCount");
 
         assertArrayEquals(expectedArray, actualArray);

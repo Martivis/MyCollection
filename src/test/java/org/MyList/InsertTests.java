@@ -6,41 +6,41 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class InsertTests {
     @Test
-    void insert_IndexGreaterThanCount_ThrowsException() {
+    void insert_IndexGreaterThanCount_ThrowsException() throws NoSuchFieldException, IllegalAccessException {
         // assert
         var list = new MyListImpl(2);
         var value = 5;
         var index = 1;
 
         // act
-        Exception ex = assertThrows(IndexOutOfBoundsException.class, () -> {
+        assertThrows(IndexOutOfBoundsException.class, () -> {
             list.insert(value, index);
         });
 
         // assert
-        var expectedMessage = "Index out of range";
-        var actualMessage = ex.getMessage();
+        var expected = new int[] { 0, 0 };
+        int[] actual = getFieldValue(list, "array");
 
-        assertTrue(actualMessage.contains(expectedMessage));
+        assertArrayEquals(expected, actual);
     }
 
     @Test
-    void insert_NegativeIndex_ThrowsException() {
+    void insert_NegativeIndex_ThrowsException() throws NoSuchFieldException, IllegalAccessException {
         // assert
         var list = new MyListImpl(2);
         var value = 5;
         var index = -1;
 
         // act
-        Exception ex = assertThrows(IndexOutOfBoundsException.class, () -> {
+        assertThrows(IndexOutOfBoundsException.class, () -> {
             list.insert(value, index);
         });
 
         // assert
-        var expectedMessage = "Index out of range";
-        var actualMessage = ex.getMessage();
+        var expected = new int[] { 0, 0 };
+        int[] actual = getFieldValue(list, "array");
 
-        assertTrue(actualMessage.contains(expectedMessage));
+        assertArrayEquals(expected, actual);
     }
 
     @Test
@@ -55,7 +55,7 @@ public class InsertTests {
 
         // assert
         var expected = new int[] { 5, 0 };
-        var actual = getArray(list);
+        int[] actual = getFieldValue(list, "array");
 
         assertArrayEquals(expected, actual);
     }
@@ -66,10 +66,10 @@ public class InsertTests {
         var list = new MyListImpl(2);
 
         var array = new int[] { 5, 0 };
-        setArray(list, array);
+        setFieldValue(list, "array", array);
 
         var elementsCount = 1;
-        setElementsCount(list, elementsCount);
+        setFieldValue(list, "elementsCount", elementsCount);
 
         var value = 3;
         var index = 1;
@@ -79,7 +79,7 @@ public class InsertTests {
 
         // assert
         var expected = new int[] { 5, 3 };
-        var actual = getArray(list);
+        int[] actual = getFieldValue(list, "array");
 
         assertArrayEquals(expected, actual);
     }
@@ -90,10 +90,10 @@ public class InsertTests {
         var list = new MyListImpl(3);
 
         var array = new int[] { 5, 1, 0 };
-        setArray(list, array);
+        setFieldValue(list, "array", array);
 
         var elementsCount = 2;
-        setElementsCount(list, elementsCount);
+        setFieldValue(list, "elementsCount", elementsCount);
 
         var value = 3;
         var index = 0;
@@ -103,7 +103,7 @@ public class InsertTests {
 
         // assert
         var expected = new int[] { 3, 5, 1 };
-        var actual = getArray(list);
+        int[] actual = getFieldValue(list, "array");
 
         assertArrayEquals(expected, actual);
     }
@@ -114,10 +114,10 @@ public class InsertTests {
         var list = new MyListImpl(3);
 
         var array = new int[] { 5, 1, 0 };
-        setArray(list, array);
+        setFieldValue(list, "array", array);
 
         var elementsCount = 2;
-        setElementsCount(list, elementsCount);
+        setFieldValue(list, "elementsCount", elementsCount);
 
         var value = 3;
         var index = 1;
@@ -127,7 +127,7 @@ public class InsertTests {
 
         // assert
         var expected = new int[] { 5, 3, 1 };
-        var actual = getArray(list);
+        int[] actual = getFieldValue(list, "array");
 
         assertArrayEquals(expected, actual);
     }
@@ -138,10 +138,10 @@ public class InsertTests {
         var list = new MyListImpl(3);
 
         var array = new int[] { 5, 1, 7 };
-        setArray(list, array);
+        setFieldValue(list, "array", array);
 
         var elementsCount = 3;
-        setElementsCount(list, elementsCount);
+        setFieldValue(list, "elementsCount", elementsCount);
 
         var value = 3;
         var index = 1;
@@ -151,25 +151,20 @@ public class InsertTests {
 
         // assert
         var expected = new int[] { 5, 3, 1, 7 };
-        var actual = getArray(list);
+        int[] actual = getFieldValue(list, "array");
 
         assertArrayEquals(expected, actual);
     }
 
-    int[] getArray(MyListImpl list) throws NoSuchFieldException, IllegalAccessException {
-        var arrayField = MyListImpl.class.getDeclaredField("array");
+    <TData> TData getFieldValue(MyListImpl list, String field) throws NoSuchFieldException, IllegalAccessException {
+        var arrayField = MyListImpl.class.getDeclaredField(field);
         arrayField.setAccessible(true);
-        return (int[])arrayField.get(list);
+        return (TData)arrayField.get(list);
     }
 
-    void setArray(MyListImpl list, int[] array) throws NoSuchFieldException, IllegalAccessException {
-        var arrayField = MyListImpl.class.getDeclaredField("array");
-        arrayField.setAccessible(true);
-        arrayField.set(list, array);
-    }
-
-    void setElementsCount(MyListImpl list, int value) throws NoSuchFieldException, IllegalAccessException {
-        var arrayField = MyListImpl.class.getDeclaredField("elementsCount");
+    <TData> void setFieldValue(MyListImpl list, String field, TData value)
+            throws NoSuchFieldException, IllegalAccessException {
+        var arrayField = MyListImpl.class.getDeclaredField(field);
         arrayField.setAccessible(true);
         arrayField.set(list, value);
     }

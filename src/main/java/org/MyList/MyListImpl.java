@@ -28,14 +28,14 @@ public class MyListImpl implements MyList {
      */
     @Override
     public void insert(int value, int index) {
-        checkIndex(index);
+        checkIndexForInsert(index);
         freeUpSpace(1);
         moveElementsRightFrom(index);
         array[index] = value;
         elementsCount++;
     }
 
-    private void checkIndex(int index) throws IndexOutOfBoundsException {
+    private void checkIndexForInsert(int index) throws IndexOutOfBoundsException {
         if (index > elementsCount || index < 0)
             throw new IndexOutOfBoundsException("Index out of range");
     }
@@ -66,8 +66,14 @@ public class MyListImpl implements MyList {
      */
     @Override
     public void erase(int index) {
+        checkIndexForErase(index);
         moveElementsLeftUntil(index);
         elementsCount--;
+    }
+
+    private void checkIndexForErase(int index) throws IndexOutOfBoundsException {
+        if (index > elementsCount - 1 || index < 0)
+            throw new IndexOutOfBoundsException("Index out of range");
     }
 
     private void moveElementsLeftUntil(int index) {
